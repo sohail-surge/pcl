@@ -260,7 +260,11 @@ endmacro(PCL_CUDA_ADD_LIBRARY)
 # _component The part of PCL that this library belongs to.
 # ARGN the source files for the library.
 macro(PCL_ADD_EXECUTABLE _name _component)
+    if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
     add_executable(${_name} ${ARGN})
+    else()
+    add_library(${_name} ${ARGN})
+    endif()
     # must link explicitly against boost.
     if(UNIX AND NOT ANDROID)
       target_link_libraries(${_name} ${Boost_LIBRARIES} pthread m ${CLANG_LIBRARIES})
@@ -279,7 +283,8 @@ macro(PCL_ADD_EXECUTABLE _name _component)
 
     set(PCL_EXECUTABLES ${PCL_EXECUTABLES} ${_name})
     install(TARGETS ${_name} RUNTIME DESTINATION ${BIN_INSTALL_DIR}
-        COMPONENT pcl_${_component})
+        COMPONENT pcl_${_component} ARCHIVE DESTINATION ${BIN_INSTALL_DIR})
+    
 endmacro(PCL_ADD_EXECUTABLE)
 
 ###############################################################################
